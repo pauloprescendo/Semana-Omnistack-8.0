@@ -1,13 +1,15 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const routes = require('./routes');
 
 const server = express();
 
-server.get('/', (req, res) => {
-  if (req.query.name) {
-    res.send(`Olá ${req.query.name}`);
-  } else {
-    res.send('Olá Dev!');
-  }
+mongoose.connect('mongodb+srv://dbUser:dbUser@cluster0-epyzo.mongodb.net/tindev?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
 });
+
+server.use(express.json());
+
+server.use(routes);
 
 server.listen(3333);
