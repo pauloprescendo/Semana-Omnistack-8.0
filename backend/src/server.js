@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const routes = require('./routes');
 
 const server = express();
@@ -8,6 +9,7 @@ mongoose.connect('mongodb+srv://dbUser:dbUser@cluster0-epyzo.mongodb.net/tindev?
   useNewUrlParser: true,
 });
 
+server.use(cors());
 server.use(express.json());
 
 server.use(routes);
