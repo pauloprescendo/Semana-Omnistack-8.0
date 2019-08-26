@@ -1,17 +1,33 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 const routes = require('./routes');
 
-const server = express();
+const connectedUsers = {};
+
+io.on('connection', (socket) => {
+  const { user } = socket.handshake.query;
+  connectedUsers[user] = socket.id;
+});
 
 mongoose.connect('mongodb+srv://dbUser:dbUser@cluster0-epyzo.mongodb.net/tindev?retryWrites=true&w=majority', {
   useNewUrlParser: true,
 });
 
-server.use(cors());
-server.use(express.json());
+app.use((req, res, next) => {
+  req.io = io;
+  req.connectedUsers = connectedUsers;
 
-server.use(routes);
+  return next();
+});
+
+app.use(cors());
+app.use(express.json());
+app.use(routes);
 
 server.listen(3333);
